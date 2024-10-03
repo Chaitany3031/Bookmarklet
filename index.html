@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta & Links Info</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" id="openModalBtn" style="display:none;">
+    Open Info
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="infoModalLabel">Meta & Internal Links Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function getPageInfo() {
+        function getMetaInfo() {
+            let metaTags = document.getElementsByTagName('meta');
+            let title = document.title;
+            let metaInfo = {};
+            metaInfo['Title'] = (title ? title : '<span style="color:red;">NOT FOUND</span>');
+
+            for (let i = 0; i < metaTags.length; i++) {
+                let metaTag = metaTags[i];
+                let name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
+                let content = metaTag.getAttribute('content');
+                if (name) {
+                    metaInfo[name.replace(/:/g, ' ')] = content || '<span style="color:red;">NOT FOUND</span>';
+                }
+            }
+
+            let output = '<h2>Meta Information</h2><pre>';
+            for (let key in metaInfo) {
+                output += `<b>${key}:</b> ${metaInfo[key]}\n`;
+            }
+            output += '</pre>';
+            return output;
+        }
+
+        function getInternalLinks() {
+            let hostname = window.location.hostname;
+            let links = document.querySelectorAll("a");
+            let totalLinks = 0, clickableLinks = 0, hiddenLinks = 0;
+            let clickableLinksList = "", hiddenLinksList = "";
+
+            links.forEach(function(link) {
+                let href = link.href;
+                if (href.includes(hostname)) {
+                    totalLinks++;
+                    let style = window.getComputedStyle(link);
+                    if (style.display !== "none" && style.visibility !== "hidden" && link.offsetHeight > 0 && link.offsetWidth > 0) {
+                        clickableLinks++;
+                        clickableLinksList += `<li><a href="${href}" target="_blank">${href}</a></li>`;
+                    } else {
+                        hiddenLinks++;
+                        hiddenLinksList += `<li>${href}</li>`;
+                    }
+                }
+            });
+
+            let output = `
+            <h2>Internal Links</h2>
+            <div class="summary">
+                <p><strong>Total Internal Links:</strong> ${totalLinks}</p>
+                <p><strong>Clickable Links:</strong> ${clickableLinks}</p>
+                <p><strong>Hidden Links:</strong> ${hiddenLinks}</p>
+            </div>
+            <h3>Clickable Links</h3>
+            <ul>${clickableLinksList}</ul>
+            <h3>Hidden Links</h3>
+            <ul>${hiddenLinksList}</ul>
+            `;
+            
+            return output;
+        }
+
+        let metaInfoOutput = getMetaInfo();
+        let internalLinksOutput = getInternalLinks();
+
+        return metaInfoOutput + internalLinksOutput;
+    }
+
+    document.getElementById('openModalBtn').onclick = function() {
+        document.getElementById('modalBody').innerHTML = getPageInfo();
+        $('#infoModal').modal('show');
+    };
+</script>
+
+</body>
+</html>
