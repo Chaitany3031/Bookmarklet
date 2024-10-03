@@ -1,0 +1,32 @@
+/* styles.css */
+
+.modal-header {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.card-header {
+    background-color: #f7f7f7;
+}
+
+.card {
+    margin-bottom: 1rem;
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.btn-primary {
+    background-color: #007bff; /* Bootstrap primary color */
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    border-color: #0056b3;
+}
